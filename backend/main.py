@@ -10,7 +10,11 @@ import store
 
 app = FastAPI(title="Order Management API")
 
-default_origins = "http://localhost:5173,http://127.0.0.1:5173"
+default_origins = ",".join([
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://ecom-5g5g.vercel.app",
+])
 allowed_origins = [
     origin.strip()
     for origin in os.getenv("ALLOWED_ORIGINS", default_origins).split(",")
@@ -20,6 +24,7 @@ allowed_origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=r"https://ecom-5g5g-[\w-]+\.vercel\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )
