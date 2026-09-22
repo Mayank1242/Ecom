@@ -1,5 +1,5 @@
-import asyncio
 import json
+import os
 from typing import List, Optional, Set
 
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
@@ -10,12 +10,24 @@ import store
 
 app = FastAPI(title="Order Management API")
 
+default_origins = "http://localhost:5173,http://127.0.0.1:5173"
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", default_origins).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
 
 
 class StatusUpdate(BaseModel):

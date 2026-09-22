@@ -1,4 +1,12 @@
-const base = "/api";
+const apiRoot = import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? "";
+const base = `${apiRoot}/api`;
+
+export function socketUrl() {
+  if (apiRoot) {
+    return `${apiRoot.replace(/^http/, "ws")}/ws`;
+  }
+  return `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
+}
 
 async function request(path, options) {
   const res = await fetch(base + path, {

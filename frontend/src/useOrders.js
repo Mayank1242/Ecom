@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createOrder, fetchOrders, fetchSummary, updateOrderStatus } from "./api";
+import { createOrder, fetchOrders, fetchSummary, socketUrl, updateOrderStatus } from "./api";
 
 const emptySummary = {
   totalOrders: 0,
@@ -44,8 +44,7 @@ export function useOrders() {
   }, [search, statuses, load]);
 
   useEffect(() => {
-    const url = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
-    const socket = new WebSocket(url);
+    const socket = new WebSocket(socketUrl());
     socket.onopen = () => setLive(true);
     socket.onclose = () => setLive(false);
     socket.onmessage = (event) => {
